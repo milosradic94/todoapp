@@ -1,58 +1,57 @@
 package com.losmilos.todoapp.controller;
 
-import com.losmilos.todoapp.dto.TodoDto;
+import com.losmilos.todoapp.dto.mapper.TodoMapperImpl;
+import com.losmilos.todoapp.dto.request.TodoRequest;
+import com.losmilos.todoapp.dto.response.TodoResponse;
 import com.losmilos.todoapp.entity.Todo;
 import com.losmilos.todoapp.services.TodoService;
-import org.modelmapper.ModelMapper;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/v1")
 public class TodoController {
 
     private final TodoService todoService;
-    private final ModelMapper modelMapper;
 
-    public TodoController(TodoService todoService, ModelMapper modelMapper) {
-        this.todoService = todoService;
-        this.modelMapper = modelMapper;
-    }
+    private final TodoMapperImpl todoMapper;
 
     @GetMapping("/todo")
-    public ResponseEntity<Page<TodoDto>> getPaged(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<TodoResponse>> getPaged(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<Todo> todoPaged = todoService.getPaged(page, size);
-        Page<TodoDto> todoResponse = todoPaged.map(todo -> modelMapper.map(todo, TodoDto.class));
-        return new ResponseEntity<Page<TodoDto>>(todoResponse, HttpStatus.OK);
+        Page<TodoResponse> todoResponse = todoPaged.map(todo -> todoMapper.toResponse(todo));
+        return new ResponseEntity<Page<TodoResponse>>(todoResponse, HttpStatus.OK);
     }
 
     @PostMapping("/todo/create")
-    public ResponseEntity<TodoDto> create(@RequestBody TodoDto todoDto) {
-        Todo todoRequest = modelMapper.map(todoDto, Todo.class);
-        Todo todo = todoService.create(todoRequest);
-        TodoDto todoResponse = modelMapper.map(todo, TodoDto.class);
-        return new ResponseEntity<TodoDto>(todoResponse, HttpStatus.CREATED);
+    public ResponseEntity<TodoResponse> create(@Valid @RequestBody TodoRequest todoRequest) {
+        Todo todo = todoService.create(todoMapper.toEntity(todoRequest));
+        TodoResponse todoResponse = todoMapper.toResponse(todo);
+        return new ResponseEntity<TodoResponse>(todoResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/todo/{id}/finished")
-    public ResponseEntity<TodoDto> markAsFinished(@PathVariable long id) {
+    public ResponseEntity<TodoResponse> markAsFinished(@PathVariable Long id) {
         Todo todo = todoService.markAsFinished(id);
-        TodoDto todoResponse = modelMapper.map(todo, TodoDto.class);
-        return new ResponseEntity<TodoDto>(todoResponse, HttpStatus.OK);
+        TodoResponse todoResponse = todoMapper.toResponse(todo);
+        return new ResponseEntity<TodoResponse>(todoResponse, HttpStatus.OK);
     }
 
     @PutMapping("/todo/{id}/update")
-    public ResponseEntity<TodoDto> update(@PathVariable long id, @RequestBody TodoDto todoDto) {
-        Todo todoRequest = modelMapper.map(todoDto, Todo.class);
-        Todo todo = todoService.update(id, todoRequest);
-        TodoDto todoResponse = modelMapper.map(todo, TodoDto.class);
-        return new ResponseEntity<TodoDto>(todoResponse, HttpStatus.OK);
+    public ResponseEntity<TodoResponse> update(@PathVariable Long id, @Valid @RequestBody TodoRequest todoRequest) {
+        Todo todo = todoService.update(id, todoMapper.toEntity(todoRequest));
+        TodoResponse todoResponse = todoMapper.toResponse(todo);
+        return new ResponseEntity<TodoResponse>(todoResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/todo/{id}")
-    public ResponseEntity<Void> delete(@PathVariable long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         todoService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

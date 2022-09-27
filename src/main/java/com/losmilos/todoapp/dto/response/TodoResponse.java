@@ -1,13 +1,18 @@
-package com.losmilos.todoapp.dto;
+package com.losmilos.todoapp.dto.response;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
-public class TodoDto {
+@Getter @Setter
+public class TodoResponse {
+
     private String name;
+
     private String description;
+
     private LocalDateTime datetime;
+
     private Boolean finished;
 }
