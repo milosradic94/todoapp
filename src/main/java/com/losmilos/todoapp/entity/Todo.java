@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -13,8 +13,8 @@ public class Todo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Setter(AccessLevel.PROTECTED)
-    private int id;
+    @Setter(AccessLevel.NONE)
+    private long id;
 
     @Column
     private String name;
@@ -23,7 +23,7 @@ public class Todo {
     private String description;
 
     @Column
-    private Date datetime;
+    private LocalDateTime datetime;
 
     @Column
     private Boolean finished = false;
