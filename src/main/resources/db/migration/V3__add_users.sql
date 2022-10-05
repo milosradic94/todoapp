@@ -1,0 +1,13 @@
+CREATE TABLE user
+(
+    id         BIGINT AUTO_INCREMENT NOT NULL,
+    first_name VARCHAR(255) NULL,
+    last_name  VARCHAR(255) NULL,
+    CONSTRAINT pk_user PRIMARY KEY (id)
+);
+
+ALTER TABLE todo
+    ADD user_id BIGINT NOT NULL;
+
+ALTER TABLE todo
+    ADD CONSTRAINT FK_TODO_ON_USER FOREIGN KEY (user_id) REFERENCES user (id);

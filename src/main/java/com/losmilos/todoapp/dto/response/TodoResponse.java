@@ -15,4 +15,6 @@ public class TodoResponse {
     private LocalDateTime datetime;
 
     private Boolean finished;
+
+    private UserResponse user;
 }
