@@ -11,12 +11,18 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Service
 public class TodoService {
 
     private final UserRepository userRepository;
     private final TodoRepository todoRepository;
+
+    public List<Todo> getAllForTodayFinished(Long userId) {
+        return todoRepository.findAllForTodayFinishedByUserId(userId);
+    }
 
     public Page<Todo> getPaged(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

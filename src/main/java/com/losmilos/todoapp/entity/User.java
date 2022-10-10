@@ -21,6 +21,9 @@ public class User {
     @Column
     private String lastName;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="user")
+    @Column
+    private String email;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy="user")
     private List<Todo> todos;
 }
